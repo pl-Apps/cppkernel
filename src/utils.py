@@ -22,6 +22,7 @@ def download(link, file_name):
 
 def extractall(target, path):
     import zipfile
+    import os
     with zipfile.ZipFile(target) as archive:
         j = 0
         import progressbar
@@ -29,7 +30,11 @@ def extractall(target, path):
             widgets=[progressbar.Bar('=', '[', ']'), ' ', progressbar.Percentage()])
         bar.start()
         for file in archive.filelist:
-            archive.extract(file.filename, path)
+            if os.name == "nt":
+                if not file.filename.__contains__("aux"):
+                    archive.extract(file.filename, path)
+            else:
+                archive.extract(file.filename, path)
             bar.update(j)
             j += 1
         bar.finish()
